@@ -11,6 +11,7 @@ GameObject:
   - 33: {fileID: 3301738}
   - 135: {fileID: 13527826}
   - 23: {fileID: 2395140}
+  - 114: {fileID: 11439450}
   m_Layer: 8
   m_Name: Ball
   m_TagString: Untagged
@@ -61,6 +62,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 162206}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &11439450
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 162206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec594d7d278ebb643b7495ff9394d1ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ballPrefab: {fileID: 162206}
 --- !u!135 &13527826
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -92,6 +105,10 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: a68557d0f3bc15945aefbc51a2dc36aa, type: 2}
+    - target: {fileID: 0}
+      propertyPath: ballPrefab
+      value: 
+      objectReference: {fileID: 162206}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 162206}
