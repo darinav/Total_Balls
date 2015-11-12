@@ -38,7 +38,6 @@ public class Pathfinding : MonoBehaviour
 
             if (currentNode == targetNode)
             {
-                Debug.Log("finder found");
                 RetracePath(startNode, targetNode);
                 return;
             }
@@ -79,7 +78,6 @@ public class Pathfinding : MonoBehaviour
         }
         path.Reverse();
         grid.path = path;
-        Debug.Log(grid.path.Count);
     }
 
     // Search for the least of X or Y length and calculate how many 

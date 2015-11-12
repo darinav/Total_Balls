@@ -11,12 +11,17 @@ public class UI_GameOver : MonoBehaviour
     private float timeToReload = 7f;
     private float timer = 0f;
 
-    void Start ()
+    void Awake ()
     {
         canvas = canvas.GetComponent<Canvas>();
-        scoreText = GetComponent<Text>();
-        playAgain = GetComponent<Button>();
+        scoreText = GameObject.Find("Score").GetComponent<Text>();
+        playAgain = GameObject.Find("ReloadButton").GetComponent<Button>();
 	}
+
+    void Start()
+    {
+        scoreText.text = "Your score: " + GlobalControlScript.Instance.score.ToString();
+    }
 
     void Update()
     {

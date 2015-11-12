@@ -41,6 +41,7 @@ public class MatchedBallsController : MonoBehaviour
             totalScore += 25*streak;
         }
         //Debug.Log(totalScore);
+        GlobalControlScript.Instance.SaveScore(totalScore);
     }
 
     public void AddBallInfo(BallColor color, Node node)

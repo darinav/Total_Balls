@@ -7,12 +7,18 @@ public class UI_MainScreen : MonoBehaviour
     public Button playButton;
     public Text highestScore;
 
-	void Start ()
+	void Awake ()
     {
         canvas = canvas.GetComponent<Canvas>();
-        playButton = GetComponent<Button>();
-        highestScore = GetComponent<Text>();
-	}
+        playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+        highestScore = GameObject.Find("HighScore").GetComponent<Text>();
+        
+    }
+
+    void Start()
+    {
+        highestScore.text = "Highest Score: " + GlobalControlScript.Instance.highestScore.ToString();
+    }
 
     public void OnPlayPress()
     {
