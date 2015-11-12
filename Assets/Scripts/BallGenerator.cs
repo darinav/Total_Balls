@@ -26,8 +26,9 @@ public class BallGenerator : MonoBehaviour
     void GenerateBalls()
     {
         //random color and node values
-        BallColor ballColor = BallColor.Red;//(BallColor)Random.Range(0, 6);
-        Node pos = Grid.Instance.emptyNodes[Random.Range(0, Grid.Instance.emptyNodes.Count)];
+        BallColor ballColor = BallColor.Green; //(BallColor)Random.Range(0, 6);
+        List<Node> emptyNodes = Grid.Instance.getEmptyNodes();
+        Node pos = emptyNodes[Random.Range(0, emptyNodes.Count)];
 
         if (pos != null) { 
         //instantiate and assign ball to the node
@@ -36,8 +37,6 @@ public class BallGenerator : MonoBehaviour
         pos.assignedBall = newBall;
 
         //change empty and occupied nodes status
-        Grid.Instance.occupiedNodes.Add(pos);
-        Grid.Instance.emptyNodes.Remove(pos);
         Grid.Instance.UpdateNodeStatus(pos, false);
 
         //add info to the match controller

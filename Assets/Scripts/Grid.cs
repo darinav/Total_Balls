@@ -10,9 +10,6 @@ public class Grid : MonoBehaviour
     public float nodeRadius;
     public static Node mouseNode;    
 
-    public List<Node> occupiedNodes;
-    public List<Node> emptyNodes;
-
     float nodeDiameter;
     public int gridSizeX;
     public int gridSizeY;
@@ -24,8 +21,6 @@ public class Grid : MonoBehaviour
     void Start()
     {
         Instance = this;
-        emptyNodes = new List<Node>();
-        occupiedNodes = new List<Node>();
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
@@ -48,15 +43,6 @@ public class Grid : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
-
-                if (grid[x, y].walkable)
-                {
-                    emptyNodes.Add(grid[x, y]);
-                }
-                else
-                {
-                    occupiedNodes.Add(grid[x, y]);
-                }
             }
         }
     }
@@ -64,17 +50,22 @@ public class Grid : MonoBehaviour
     public void UpdateNodeStatus(Node node, bool walkable)
     {
         node.walkable = walkable;
-        if (walkable)
-        {
-            emptyNodes.Add(node);
-            occupiedNodes.Remove(node);
-        }
-        else
-        {
-            occupiedNodes.Add(node);
-            emptyNodes.Remove(node);
-        }
+    }
 
+    public List<Node> getEmptyNodes()
+    {
+        List<Node> emptyNodes = new List<Node>();
+        for (int i = 0; i < gridWorldSize.x; i++)
+        {
+            for (int j = 0; j < gridWorldSize.y; j++)
+            {
+                if (grid[i,j].walkable)
+                {
+                    emptyNodes.Add(grid[i, j]);
+                }
+            }
+        }
+        return emptyNodes;
     }
 
     public List<Node> GetNeighbours(Node node)
@@ -100,7 +91,6 @@ public class Grid : MonoBehaviour
 
         return neighbours;
     }
-
 
     void DetermineMousePosition()
     {

@@ -29,7 +29,7 @@ public class Ball : MonoBehaviour
 
     public void DestroyBall()
     {
-        Debug.Log("DestroyBall");
+        //Debug.Log("DestroyBall");
         Destroy(gameObject);
     }
 }

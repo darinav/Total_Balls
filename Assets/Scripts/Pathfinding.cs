@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public class Pathfinding : MonoBehaviour
 {
-    //public Transform start, finish;
-    public Node start, finish;
     public static Pathfinding Instance;
 
     Grid grid;
@@ -17,27 +15,14 @@ public class Pathfinding : MonoBehaviour
         Instance = this;
     }
 
-    void Update()
-    {
-        if (start != null && finish != null)
-        {
-            Debug.Log("searching");
-            FindPath(start, finish);
-            start = null;
-            finish = null;
-        }
-
-    }
-
-    void FindPath(Node startNode, Node targetNode)
-    {
-        //Node startNode = grid.NodeFromWorldPoint(startPos);
-        //Node targetNode = grid.NodeFromWorldPoint(targetPos);
-
+    public void FindPath(Node startNode, Node targetNode)
+    {        
+        Debug.Log("find path ok");
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
 
+        #region iterating openset
         while (openSet.Count > 0)
         {
             Node currentNode = openSet[0];
@@ -54,6 +39,7 @@ public class Pathfinding : MonoBehaviour
 
             if (currentNode == targetNode)
             {
+                Debug.Log("finder found");
                 RetracePath(startNode, targetNode);
                 return;
             }
@@ -79,6 +65,7 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+        #endregion
     }
 
     void RetracePath(Node startNode, Node endNode)
@@ -91,10 +78,10 @@ public class Pathfinding : MonoBehaviour
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
-
+        Debug.Log("retrace path ok");
         path.Reverse();
-
         grid.path = path;
+        Debug.Log(grid.path.Count);
     }
 
     // Search for the least of X or Y length and calculate how many 
