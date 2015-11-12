@@ -7,8 +7,9 @@ enum line_type { col = 0, row };
 public class MatchedBallsController : MonoBehaviour
 {
     public static MatchedBallsController Instance;
-    public Dictionary<BallColor, int[,]> MatchTracker;    
-
+    public Dictionary<BallColor, int[,]> MatchTracker;
+    public int totalScore;
+    int streak;
     void Awake()
     {
         Instance = this;
@@ -22,6 +23,26 @@ public class MatchedBallsController : MonoBehaviour
         }
     }
 
+    void AddScore(int numOfBalls)
+    {
+        if(numOfBalls == 0)
+        {
+            streak = 0;
+            BallGenerator.Instance.noMatches = true;
+        }
+        else if (numOfBalls >= 5)
+        {
+            totalScore += 2*numOfBalls;
+            streak++;
+        }
+
+        if(streak > 1)
+        {
+            totalScore += 25*streak;
+        }
+        //Debug.Log(totalScore);
+    }
+
     public void AddBallInfo(BallColor color, Node node)
     {
         int[,] rowsAndColumns;
@@ -32,23 +53,44 @@ public class MatchedBallsController : MonoBehaviour
         rowsAndColumns[(int)line_type.row, y] += 1;
         rowsAndColumns[(int)line_type.col, x] += 1;
 
+        int number_of_removed = 0;
         if (rowsAndColumns[(int)line_type.col, x] >= 5 && rowsAndColumns[(int)line_type.row, y] >= 5
             && Grid.Instance.grid[x, y].assignedBall != null && Grid.Instance.grid[x, y].assignedBall.color.Equals(color))
         {
             if (rowsAndColumns[(int)line_type.col, x] >= 5)
-                if (FindMatchedBalls(line_type.col, x, color))
+            {
+                number_of_removed = FindMatchedBalls(line_type.col, x, color);
+                if (0 != number_of_removed)
+                {
                     rowsAndColumns[(int)line_type.row, y] += 1;
+                }
+                    AddScore(number_of_removed);
+            }
 
-            if (!FindMatchedBalls(line_type.row, y, color))
+            number_of_removed = FindMatchedBalls(line_type.row, y, color);
+            if (0 != number_of_removed)
+            { 
                 rowsAndColumns[(int)line_type.row, y] -= 1;
+                AddScore(number_of_removed - 1);
+            }
+            else
+            {
+                AddScore(number_of_removed);
+            }
         }
         else
         {
             if (rowsAndColumns[(int)line_type.col, x] >= 5)
-                FindMatchedBalls(line_type.col, x, color);
+            {
+                number_of_removed = FindMatchedBalls(line_type.col, x, color);
+            }
 
             if (rowsAndColumns[(int)line_type.row, y] >= 5)
-                FindMatchedBalls(line_type.row, y, color);
+            {
+                number_of_removed = FindMatchedBalls(line_type.row, y, color);
+            }
+
+            AddScore(number_of_removed);
         }
     }
 
@@ -72,10 +114,10 @@ public class MatchedBallsController : MonoBehaviour
         }
     }
 
-    bool FindMatchedBalls(line_type rowOrColumnIdentifier, int line_index, BallColor color)
+    int FindMatchedBalls(line_type rowOrColumnIdentifier, int line_index, BallColor color)
     {
         List<Node> nodesToClear = new List<Node>();
-        bool removed = false;
+        int number_of_removed = 0;
         
             List<Node> columnNodesToRemove = new List<Node>();
             for (int i = 0; i < 7; i++)
@@ -104,7 +146,7 @@ public class MatchedBallsController : MonoBehaviour
             //Debug.Log("+matchedCounter1: " + matchedCounter);
             if (columnNodesToRemove.Count >= 5)
             {
-                removed = true;
+            number_of_removed = columnNodesToRemove.Count;
                 foreach (Node node in columnNodesToRemove)
                 {
                     nodesToClear.Add(node);
@@ -122,7 +164,7 @@ public class MatchedBallsController : MonoBehaviour
             }
         }
 
-        return removed;
+        return number_of_removed;
     }
 
 }

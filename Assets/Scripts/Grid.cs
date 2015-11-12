@@ -5,6 +5,7 @@ public class Grid : MonoBehaviour
 {
     public static Grid Instance;
     public LayerMask unwalkableMask;
+    public LayerMask groundMask;
     public Vector2 gridWorldSize;
     public Node[,] grid;
     public float nodeRadius;
@@ -16,15 +17,23 @@ public class Grid : MonoBehaviour
     Vector3 mousePosition;
     Vector3 worldBottomLeft;
     public List<Node> path;
+    public List<Vector2> neighborNodesCoord;
 
 
-    void Start()
+    void Awake()
     {
         Instance = this;
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
         CreateGrid();
+
+        neighborNodesCoord = new List<Vector2>();
+        neighborNodesCoord.Add(new Vector2(0, 1));
+        neighborNodesCoord.Add(new Vector2(0, -1));
+        neighborNodesCoord.Add(new Vector2(-1, 0));
+        neighborNodesCoord.Add(new Vector2(1, 0));
+
     }
 
     void Update()
@@ -43,6 +52,7 @@ public class Grid : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
+                Debug.Log(worldPoint);
             }
         }
     }
@@ -72,22 +82,35 @@ public class Grid : MonoBehaviour
     {
         List<Node> neighbours = new List<Node>();
 
-        for (int x = -1; x <= 1; x++)
+        foreach (Vector2 neighbour in neighborNodesCoord)
         {
-            for (int y = -1; y <= 1; y++)
+            int checkX = node.gridX + (int)neighbour.x;
+            int checkY = node.gridY + (int)neighbour.y;
+
+            if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
             {
-                if (x == 0 && y == 0)
-                    continue;
-
-                int checkX = node.gridX + x;
-                int checkY = node.gridY + y;
-
-                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
-                {
-                    neighbours.Add(grid[checkX, checkY]);
-                }
+                neighbours.Add(grid[checkX, checkY]);
             }
         }
+        
+       
+
+        //for (int x = -1; x <= 1; x++)
+        //{
+        //    for (int y = -1; y <= 1; y++)
+        //    {
+        //        if (x == 0 && y == 0)
+        //            continue;
+
+        //        int checkX = node.gridX + x;
+        //        int checkY = node.gridY + y;
+
+        //        if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
+        //        {
+        //            neighbours.Add(grid[checkX, checkY]);
+        //        }
+        //    }
+        //}
 
         return neighbours;
     }
@@ -96,7 +119,8 @@ public class Grid : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        Debug.DrawLine(mousePosition, Camera.main.transform.position);
+        if (Physics.Raycast(ray, out hit, groundMask))
         {
             mousePosition = hit.point;
         }
@@ -135,7 +159,7 @@ public class Grid : MonoBehaviour
                 {
                     Gizmos.color = Color.cyan;
                 }
-                Gizmos.DrawCube(n.worldPosition, new Vector3(.9f, .1f, .9f));
+                Gizmos.DrawCube(n.worldPosition, new Vector3(1f, .1f, 1f));
             }
         }
     }

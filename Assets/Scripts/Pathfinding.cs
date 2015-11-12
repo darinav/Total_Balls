@@ -17,7 +17,6 @@ public class Pathfinding : MonoBehaviour
 
     public void FindPath(Node startNode, Node targetNode)
     {        
-        Debug.Log("find path ok");
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
@@ -78,7 +77,6 @@ public class Pathfinding : MonoBehaviour
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
-        Debug.Log("retrace path ok");
         path.Reverse();
         grid.path = path;
         Debug.Log(grid.path.Count);

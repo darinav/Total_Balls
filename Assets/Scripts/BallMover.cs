@@ -93,7 +93,10 @@ public class BallMover : MonoBehaviour
         if (chosen)
         {
             originalColor = ball.color;
-            ball.color = BallColor.Purple;
+            Renderer rend = ball.GetComponent<Renderer>();
+            Material highlighted = Resources.Load("Black") as Material;
+
+            rend.material = highlighted;
         }
         else
             ball.color = originalColor;
@@ -102,15 +105,23 @@ public class BallMover : MonoBehaviour
     void MoveBall(Ball ball)
     {   
         Pathfinding.Instance.FindPath(startNode, finishNode);
-        if (Grid.Instance.path != null)
+        if (Grid.Instance.path.Count > 0)
         {
             startNode.walkable = true;
             startNode.assignedBall = null;
+            MatchedBallsController.Instance.RemoveBallInfo(ball.color, startNode);
+
             finishNode.walkable = false;
-            finishNode.assignedBall = ball;
+            finishNode.assignedBall = ball; 
 
             ball.transform.position = finishNode.worldPosition;
             colorFade(ballToMove, false);
+            MatchedBallsController.Instance.AddBallInfo(ball.color, finishNode);
         }
+        else
+        {
+            colorFade(ballToMove, false);
+        }
+        Grid.Instance.path.Clear();
     }    
 }

@@ -8,6 +8,6 @@ public enum BallColor
     Yellow,
     Green,
     Blue,
-    Purple    
+    Purple 
 }
 

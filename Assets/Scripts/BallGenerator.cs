@@ -4,43 +4,56 @@ using System.Linq;
 
 public class BallGenerator : MonoBehaviour
 {
+    public static BallGenerator Instance;
     public Ball ball;
     public Grid grid;
-
-    public bool turnMade;
-    public bool noMatches;
+    
+    public bool noMatches = false;
 
     void Awake()
     {
         grid.GetComponent<Grid>();
+        Instance = this;
+    }
+
+    void Start()
+    {
+        Debug.Log("awake");
+        GenerateBalls();
+        noMatches = false;
     }
     
     void Update()
     {        
-        if (Input.GetKeyDown(KeyCode.H))
+        if (noMatches)
         {
             GenerateBalls();
+            noMatches = false;
         }
     }
 
     void GenerateBalls()
     {
-        //random color and node values
-        BallColor ballColor = BallColor.Green; //(BallColor)Random.Range(0, 6);
-        List<Node> emptyNodes = Grid.Instance.getEmptyNodes();
-        Node pos = emptyNodes[Random.Range(0, emptyNodes.Count)];
+        for (int i = 0; i < 3; i++)
+        {
+            //random color and node values
+            BallColor ballColor = (BallColor)Random.Range(0, 6);
+            List<Node> emptyNodes = Grid.Instance.getEmptyNodes();
+            if (emptyNodes.Count > 0)
+            {
+                Node pos = emptyNodes[Random.Range(0, emptyNodes.Count)];
+            
+                //instantiate and assign ball to the node
+                Ball newBall = (Ball)Instantiate(ball, pos.worldPosition, Quaternion.identity);
+                newBall.color = ballColor;
+                pos.assignedBall = newBall;
 
-        if (pos != null) { 
-        //instantiate and assign ball to the node
-        Ball newBall = (Ball)Instantiate(ball, pos.worldPosition, Quaternion.identity);
-        newBall.color = ballColor;
-        pos.assignedBall = newBall;
+                //change empty and occupied nodes status
+                Grid.Instance.UpdateNodeStatus(pos, false);
 
-        //change empty and occupied nodes status
-        Grid.Instance.UpdateNodeStatus(pos, false);
-
-        //add info to the match controller
-        MatchedBallsController.Instance.AddBallInfo(ballColor, pos);
+                //add info to the match controller
+                MatchedBallsController.Instance.AddBallInfo(ballColor, pos);
+            }
         }
     }
 }
