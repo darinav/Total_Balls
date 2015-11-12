@@ -4,8 +4,10 @@ using System.Collections;
 public class Ball : MonoBehaviour
 {
     public GameObject ballPrefab;
-    public Node coordinate;
-    private BallColor _color;
+    //public Node coordinate;
+
+    Renderer rend;
+    BallColor _color;
     public BallColor color
         {
             get { return _color; }
@@ -18,12 +20,16 @@ public class Ball : MonoBehaviour
                   rend.material = mat;
                 }
             }
-        }
-
-    Renderer rend;
+        }    
 
     void Awake()
     {
         rend = ballPrefab.GetComponent<Renderer>();        
+    }
+
+    public void DestroyBall()
+    {
+        Debug.Log("DestroyBall");
+        Destroy(gameObject);
     }
 }

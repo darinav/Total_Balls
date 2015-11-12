@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BallGenerator : MonoBehaviour
 {
     public Ball ball;
     public Grid grid;
 
-    bool turnMade;
-    bool noMatches;
+    public bool turnMade;
+    public bool noMatches;
 
     void Awake()
     {
@@ -23,13 +24,24 @@ public class BallGenerator : MonoBehaviour
     }
 
     void GenerateBalls()
-    {      
-        BallColor ballColor = (BallColor)Random.Range(0, 6);
-        Node pos = grid.emptyNodes[Random.Range(0, grid.emptyNodes.Count)];
-        Ball newBall = (Ball)Instantiate(ball, new Vector3(pos.gridX, .3f, pos.gridY), Quaternion.identity);
+    {
+        //random color and node values
+        BallColor ballColor = BallColor.Red;//(BallColor)Random.Range(0, 6);
+        Node pos = Grid.Instance.emptyNodes[Random.Range(0, Grid.Instance.emptyNodes.Count)];
+
+        if (pos != null) { 
+        //instantiate and assign ball to the node
+        Ball newBall = (Ball)Instantiate(ball, pos.worldPosition, Quaternion.identity);
         newBall.color = ballColor;
-        grid.occupiedNodes.Add(pos);
-        grid.emptyNodes.Remove(pos);
-        grid.RemapGrid();
-    }   
+        pos.assignedBall = newBall;
+
+        //change empty and occupied nodes status
+        Grid.Instance.occupiedNodes.Add(pos);
+        Grid.Instance.emptyNodes.Remove(pos);
+        Grid.Instance.UpdateNodeStatus(pos, false);
+
+        //add info to the match controller
+        MatchedBallsController.Instance.AddBallInfo(ballColor, pos);
+        }
+    }
 }

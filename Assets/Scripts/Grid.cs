@@ -1,28 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 public class Grid : MonoBehaviour
 {
-    public Transform player;
+    public static Grid Instance;
     public LayerMask unwalkableMask;
     public Vector2 gridWorldSize;
     public Node[,] grid;
     public float nodeRadius;
-    public Node mouseNode;    
+    public static Node mouseNode;    
 
     public List<Node> occupiedNodes;
     public List<Node> emptyNodes;
 
     float nodeDiameter;
-    int gridSizeX;
-    int gridSizeY;
+    public int gridSizeX;
+    public int gridSizeY;
     Vector3 mousePosition;
     Vector3 worldBottomLeft;
+    public List<Node> path;
 
 
     void Start()
     {
+        Instance = this;
         emptyNodes = new List<Node>();
         occupiedNodes = new List<Node>();
         nodeDiameter = nodeRadius * 2;
@@ -31,17 +32,15 @@ public class Grid : MonoBehaviour
         CreateGrid();
     }
 
+    void Update()
+    {
+        DetermineMousePosition();
+    }
+
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
         worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
-        RemapGrid();
-    }
-
-    public void RemapGrid()
-    {
-        List<Node> occupied = new List<Node>();
-        List<Node> empty = new List<Node>();
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
@@ -49,26 +48,59 @@ public class Grid : MonoBehaviour
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
                 bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
-                //
+
                 if (grid[x, y].walkable)
                 {
-                    empty.Add(grid[x, y]);
+                    emptyNodes.Add(grid[x, y]);
                 }
                 else
                 {
-                    occupied.Add(grid[x, y]);
+                    occupiedNodes.Add(grid[x, y]);
                 }
             }
         }
-        
-        occupiedNodes = occupied;
-        emptyNodes = empty;
     }
 
-    void Update()
+    public void UpdateNodeStatus(Node node, bool walkable)
     {
-        DetermineMousePosition();        
-    }    
+        node.walkable = walkable;
+        if (walkable)
+        {
+            emptyNodes.Add(node);
+            occupiedNodes.Remove(node);
+        }
+        else
+        {
+            occupiedNodes.Add(node);
+            emptyNodes.Remove(node);
+        }
+
+    }
+
+    public List<Node> GetNeighbours(Node node)
+    {
+        List<Node> neighbours = new List<Node>();
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (x == 0 && y == 0)
+                    continue;
+
+                int checkX = node.gridX + x;
+                int checkY = node.gridY + y;
+
+                if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
+                {
+                    neighbours.Add(grid[checkX, checkY]);
+                }
+            }
+        }
+
+        return neighbours;
+    }
+
 
     void DetermineMousePosition()
     {
@@ -102,6 +134,13 @@ public class Grid : MonoBehaviour
             foreach (Node n in grid)
             {
                 Gizmos.color = (n.walkable) ? Color.white : Color.red;
+                if (path != null)
+                {
+                    if (path.Contains(n))
+                    {
+                        Gizmos.color = Color.blue;
+                    }
+                }
                 if (mouseNode == n)
                 {
                     Gizmos.color = Color.cyan;
