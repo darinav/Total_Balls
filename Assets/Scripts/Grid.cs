@@ -33,7 +33,6 @@ public class Grid : MonoBehaviour
         neighborNodesCoord.Add(new Vector2(0, -1));
         neighborNodesCoord.Add(new Vector2(-1, 0));
         neighborNodesCoord.Add(new Vector2(1, 0));
-
     }
 
     void Update()
@@ -91,25 +90,6 @@ public class Grid : MonoBehaviour
                 neighbours.Add(grid[checkX, checkY]);
             }
         }
-        
-       
-
-        //for (int x = -1; x <= 1; x++)
-        //{
-        //    for (int y = -1; y <= 1; y++)
-        //    {
-        //        if (x == 0 && y == 0)
-        //            continue;
-
-        //        int checkX = node.gridX + x;
-        //        int checkY = node.gridY + y;
-
-        //        if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY)
-        //        {
-        //            neighbours.Add(grid[checkX, checkY]);
-        //        }
-        //    }
-        //}
 
         return neighbours;
     }
@@ -130,15 +110,15 @@ public class Grid : MonoBehaviour
     {
         float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
         float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
-        int x = getIndexForCord(percentX, gridSizeX);
-        int y = getIndexForCord(percentY, gridSizeY);
+        int x = getIndexForCoord(percentX, gridSizeX);
+        int y = getIndexForCoord(percentY, gridSizeY);
         return grid[x, y];
     }
 
-    private int getIndexForCord(float coord, int cellsCount)
+    private int getIndexForCoord(float coord, int cellsCount)
     {
         int index = 0;
-        float step = nodeDiameter / cellsCount;
+        float step = 1.0f / cellsCount;
         float sum = step;
         while (sum < coord)
         {

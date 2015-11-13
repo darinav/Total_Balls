@@ -13,16 +13,10 @@ public class GlobalControlScript : MonoBehaviour
         {
             DontDestroyOnLoad(gameObject);
             Instance = this;
-            Debug.Log("BALLS");
         }
         else if (Instance != this)
         {
             DestroyImmediate(gameObject);
-            Debug.Log("deleted");
-        }
-        else
-        {
-            Debug.Log("Total balls");
         }
     }
 

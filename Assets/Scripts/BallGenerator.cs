@@ -18,7 +18,6 @@ public class BallGenerator : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("awake");
         GenerateBalls();
         noMatches = false;
     }

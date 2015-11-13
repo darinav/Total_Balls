@@ -14,7 +14,7 @@ public class MatchedBallsController : MonoBehaviour
     {
         Instance = this;
 
-        int[,] rowsAndColumns = new int[2, Grid.Instance.gridSizeX];
+        int[,] rowsAndColumns = new int[2, 7];
         MatchTracker = new Dictionary<BallColor, int[,]>();
         Array values = Enum.GetValues(typeof(BallColor));
         foreach (BallColor color in values)
@@ -56,19 +56,22 @@ public class MatchedBallsController : MonoBehaviour
         rowsAndColumns[(int)line_type.col, x] += 1;
         
         int number_of_removed = 0;
+        //check if there is a row and column simultaneously
         if (rowsAndColumns[(int)line_type.col, x] >= 5 && rowsAndColumns[(int)line_type.row, y] >= 5
             && Grid.Instance.grid[x, y].assignedBall != null && Grid.Instance.grid[x, y].assignedBall.color.Equals(color))
         {
             number_of_removed = FindMatchedBalls(line_type.col, x, color);
             if (number_of_removed != 0)
             {
+                //adding a temporary ball so row can also be matched
                 rowsAndColumns[(int)line_type.row, y] += 1;
             }
             AddScore(number_of_removed);
 
             int number_of_removed2 = FindMatchedBalls(line_type.row, y, color);
-            if (number_of_removed2 != 0)
+            if (number_of_removed2 == 0)
             { 
+                //removing temporary ball
                 rowsAndColumns[(int)line_type.row, y] -= 1;
             }
             
@@ -112,7 +115,7 @@ public class MatchedBallsController : MonoBehaviour
     int FindMatchedBalls(line_type rowOrColumnIdentifier, int line_index, BallColor color)
     {
         List<Node> columnNodesToRemove = new List<Node>();
-        for (int i = 0; i < Grid.Instance.gridSizeX; i++)
+        for (int i = 0; i < 7; i++)
         {
             Node current = get_element(rowOrColumnIdentifier, line_index, i);
             if (current.assignedBall != null &&
@@ -147,8 +150,6 @@ public class MatchedBallsController : MonoBehaviour
                 }
             }
         }
-
         return number_of_removed;
     }
-
 }

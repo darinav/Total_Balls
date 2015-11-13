@@ -20,7 +20,7 @@ public class BallMover : MonoBehaviour
         {
             if (Grid.mouseNode.assignedBall)
             {
-                if (ballChosen == false)
+                if (!ballChosen)
                 {
                     startNode = Grid.mouseNode;
                     ballChosen = true;
@@ -49,42 +49,6 @@ public class BallMover : MonoBehaviour
                     startNode = null;
                 }
             }
-            #region comm
-            //if (ballChosen)
-            //{
-            //    if (!Grid.mouseNode.assignedBall)
-            //    {
-            //        finishNode = Grid.mouseNode;
-            //        MoveBall(ballToMove);
-            //        ballChosen = false;
-            //    }
-            //    else
-            //    {
-            //        ballChosen = false;
-            //    }
-            //}
-
-            //else
-            //{
-            //    startNode = null;
-            //    finishNode = null;
-            //}
-
-
-            //if (!Grid.mouseNode.assignedBall && ballChosen)
-            //{
-            //    finishNode = Grid.mouseNode;
-            //    MoveBall(ballToMove);
-            //    ballChosen = false;
-            //}
-
-            //else
-            //{
-            //    ballChosen = false;
-            //    startNode = null;
-            //    finishNode = null;
-            //}
-            #endregion
         }
     }
 
