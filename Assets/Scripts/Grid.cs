@@ -130,12 +130,22 @@ public class Grid : MonoBehaviour
     {
         float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
         float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
-        percentX = Mathf.Clamp01(percentX);
-        percentY = Mathf.Clamp01(percentY);
-
-        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+        int x = getIndexForCord(percentX, gridSizeX);
+        int y = getIndexForCord(percentY, gridSizeY);
         return grid[x, y];
+    }
+
+    private int getIndexForCord(float coord, int cellsCount)
+    {
+        int index = 0;
+        float step = nodeDiameter / cellsCount;
+        float sum = step;
+        while (sum < coord)
+        {
+            sum += step;
+            index++;
+        }
+        return index;
     }
 
     void OnDrawGizmos()

@@ -38,7 +38,6 @@ public class BallGenerator : MonoBehaviour
 
     void GenerateBalls()
     {
-        
         for (int i = 0; i < 3; i++)
         {
             //random color and node values
